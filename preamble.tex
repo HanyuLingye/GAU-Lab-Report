@@ -1,0 +1,104 @@
+% =============================================================
+%  preamble.tex  ——  宏包、版面参数与页面样式
+%  编译引擎：XeLaTeX（OverLeaf 请在编译器中选 XeLaTeX）
+% =============================================================
+
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{eso-pic}
+\usepackage{tikz}
+\usetikzlibrary{calc}
+\usepackage{enumitem}
+\usepackage{array}
+
+% 带圈数字 ①②③… 归入中文字体（否则落到拉丁字体 Latin Modern，会缺字）
+\xeCJKDeclareCharClass{CJK}{"2460 -> "24FF}
+
+% ---------- 版面参数 ----------
+% 封面
+\newcommand{\CoverPaperGeometry}{%
+  \newgeometry{left=2.5cm,right=2.5cm,top=2.5cm,bottom=2.5cm}}
+% 报告页（第 2 页起）：左边界＝边框横线左端（模版实测 2.61cm）；
+% 右边界 4.3cm → 正文右边界≈16.7cm，位于批阅意见竖线（17.27cm）左侧留 0.5cm 间距
+\newcommand{\ReportPaperGeometry}{%
+  \newgeometry{left=2.61cm,right=4.3cm,top=4.40cm,bottom=2.2cm}}
+
+% ---------- 报告页边框坐标（单位 cm，相对页面绝对定位；数值取自模版实测）----------
+\def\FRleft{1.31}    % “装订线”虚线横坐标
+\def\FRbody{2.61}    % 横线左端（与信息栏/正文左边界平齐）
+\def\FRright{17.27}  % “批阅意见”栏竖线横坐标
+\def\FRlineR{19.55}  % 横线右端（向右盖过批阅意见栏）
+\def\FRbot{1.18}     % 下双线·粗线 距页底（＝距页顶 28.52cm）
+\def\FRbott{1.08}    % 下双线·细线 距页底（＝距页顶 28.62cm）
+\def\LWthick{2.6pt}  % 粗线线宽（≈0.9mm）
+\def\LWthin{0.8pt}   % 细线线宽（≈0.28mm）
+
+% 绝对页面坐标（相对页面左上/左下角）。用 calc 库写法，
+% 宏参数可正常展开（[xshift=...] 前缀在宏展开时 tikz 无法识别）。
+\newcommand{\PtNW}[2]{($(current page.north west)+(#1cm,-#2cm)$)}
+\newcommand{\PtSW}[2]{($(current page.south west)+(#1cm,#2cm)$)}
+
+% ---------- 报告页 页眉 + 边框（背景层，报告页逐页绘制）----------
+% 报告页页数计数器：在 shipout 时递增，用于区分“第2页（带信息栏）”与后续续写页
+\newcount\ReportPageNo
+
+\newcommand{\ReportPageArt}{%
+  \global\advance\ReportPageNo by 1
+  \begingroup
+  % 第 2 页顶部横线位于信息栏下方；后续续写页位于页眉正下方
+  \ifnum\ReportPageNo=1 \def\RuleTop{7.08}\else \def\RuleTop{4.20}\fi
+  % 上双线：粗线中心 / 细线中心
+  \pgfmathsetmacro{\RuleTap}{\RuleTop+0.05}
+  \pgfmathsetmacro{\RuleTbp}{\RuleTop+0.15}
+  % “批阅意见：”标签高度
+  \pgfmathsetmacro{\LabelY}{\RuleTop+0.55}
+  % “装订线”三字在框内垂直居中、字距 1.9cm；上下两段虚线的端点
+  \pgfmathsetmacro{\BindC}{(\RuleTop+28.52)/2}
+  \pgfmathsetmacro{\BindA}{\BindC-2.35}
+  \pgfmathsetmacro{\BindB}{\BindC+2.35}
+  \pgfmathsetmacro{\BindZz}{\BindC-1.9}
+  \pgfmathsetmacro{\BindZl}{\BindC+1.9}
+  \begin{tikzpicture}[remember picture,overlay]
+    % 页眉：校徽校名
+    \node[anchor=north west,inner sep=0pt] at \PtNW{2.70}{1.70}
+      {\includegraphics[width=7.0cm]{media/The_format_requires/gyau-logo.png}};
+   % 页眉：________学院实验（实习）报告
+\node[anchor=north east,inner sep=0pt,font=\zihao{4}] at \PtNW{19.15}{3.35}
+  {\underline{\makebox[4.3cm][c]{\infoCollege}}学院实验（实习）报告};
+    % 上双线（上粗下细）
+    \draw[line width=\LWthick] \PtNW{\FRbody}{\RuleTap} -- \PtNW{\FRlineR}{\RuleTap};
+    \draw[line width=\LWthin]  \PtNW{\FRbody}{\RuleTbp} -- \PtNW{\FRlineR}{\RuleTbp};
+    % 下双线（上粗下细）
+    \draw[line width=\LWthick] \PtSW{\FRbody}{\FRbot} -- \PtSW{\FRlineR}{\FRbot};
+    \draw[line width=\LWthin]  \PtSW{\FRbody}{\FRbott} -- \PtSW{\FRlineR}{\FRbott};
+    % 装订线·上段虚线（顶双线 → “装”字之前）
+    \draw[dashed,line width=0.6pt] \PtNW{\FRleft}{\RuleTop} -- \PtNW{\FRleft}{\BindA};
+    % 装订线·下段虚线（“线”字之后 → 底双线），末端向右拐与底部粗线相接
+    \draw[dashed,line width=0.6pt] \PtNW{\FRleft}{\BindB} -- \PtSW{\FRleft}{\FRbot}
+      -- \PtSW{\FRbody}{\FRbot};
+    % 装 订 线（三字，压在虚线上）
+    \node[anchor=center,inner sep=0pt] at \PtNW{\FRleft}{\BindZz} {装};
+    \node[anchor=center,inner sep=0pt] at \PtNW{\FRleft}{\BindC}  {订};
+    \node[anchor=center,inner sep=0pt] at \PtNW{\FRleft}{\BindZl} {线};
+    % 批阅意见栏竖线
+    \draw[line width=0.7pt] \PtNW{\FRright}{\RuleTap} -- \PtSW{\FRright}{\FRbot};
+    % 批阅意见标签
+    \node[anchor=north west,inner sep=0pt,font=\footnotesize]
+      at \PtNW{17.35}{\LabelY} {批阅意见：};
+  \end{tikzpicture}%
+  \endgroup}
+
+\newif\ifReportPage
+\AddToShipoutPictureBG{\ifReportPage\ReportPageArt\fi}
+
+% ---------- 额外设定 ----------
+
+
+% 实验报告小节标题（如“一、实验目的”）
+\newcommand{\ExpSection}[1]{%
+  \par\addvspace{0.85em}%
+  \noindent{\zihao{4}\bfseries #1}\par\nobreak\addvspace{0.35em}}
+
+\linespread{1.5}   % 正文行距
+
+\pagestyle{empty}  % 不显示页码

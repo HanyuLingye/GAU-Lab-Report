@@ -1,0 +1,67 @@
+% !TeX program = xelatex
+% =============================================================
+%  甘肃农业大学实验报告模板
+%  基于 XeLaTeX
+%
+%  文档结构：
+%    第 1 页 ............ 封面
+%    第 2 页 ............ 信息栏 + 实验正文（带“装订线/批阅意见”边框）
+%    第 3 页及以后 ...... 与第 2 页同版式，用于续写
+%
+%  文件说明：
+%    preamble.tex                            宏包与版面样式
+%    cover.tex                               封面
+%    information.tex                         关键信息
+%    sections/*.tex                          实验正文章节
+%    media /The_format_requires              图像资源
+% =============================================================
+\documentclass[UTF8,a4paper,zihao=-4,fontset=fandol]{ctexart}
+\input{information}
+\input{preamble}
+
+\begin{document}
+
+% ==================== 第 1 页：封面 ====================
+\input{cover}
+
+% ==================== 第 2 页起：报告正文 ====================
+\newpage
+\ReportPaperGeometry
+\ReportPagetrue          % 打开报告页边框
+
+
+
+
+% ---- 信息栏----
+% 三行铺满 x=2.61~19.37cm
+\begingroup
+\zihao{5}\linespread{1.3}\selectfont
+\def\RowW{16.76cm}
+\noindent\makebox[0pt][l]{\hbox to \RowW{%
+  \makebox[9.0cm][l]{专业班级：\underline{\makebox[1.8cm][c]{\infoMajor}}专业\underline{\makebox[0.9cm][c]{\infoGrade}}级\underline{\makebox[0.9cm][c]{\infoClassNo}}班}%
+  组别：\underline{\makebox[1.4cm][c]{\infoGroup}}\hfill 指导教师：\underline{\makebox[2.2cm][c]{\infoTeacher}}\hss}}\par
+\vspace{0.31cm}
+\noindent\makebox[0pt][l]{\hbox to \RowW{%
+  \makebox[9.0cm][l]{课程名称：\underline{\makebox[5.0cm][c]{\infoCourse}}}%
+  姓名：\underline{\makebox[1.4cm][c]{\infoName}}\hfill 学\hspace{0.4em}号：\underline{\makebox[2.0cm][c]{\infoStudentId}}\hss}}\par
+\vspace{0.31cm}
+\noindent\makebox[0pt][l]{\hbox to \RowW{%
+  \makebox[9.0cm][l]{实验（实习）时间：\underline{\makebox[4.2cm][c]{\infoExperimentTime}}}%
+  \hfill 成\hspace{0.4em}绩：\underline{\makebox[2.0cm][c]{\infoScore}}\hss}}\par
+\endgroup
+
+\vspace*{0.55cm}          % 使正文从第 2 页顶部双线下方开始
+
+% ---- 实验题目 ----
+\begin{center}
+  {\zihao{4}\bfseries \infoExpNo\quad \infoExpTitle}
+\end{center}
+
+% ---- 正文各章节 ----
+\input{sections/01-mubiao}
+\input{sections/02-yiqi}
+\input{sections/03-neirong}
+\input{sections/04-guocheng}
+\input{sections/05-zongjie}
+
+\end{document}
