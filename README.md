@@ -2,7 +2,7 @@
 ### 甘肃农业大学本科生实验报告 LaTeX 模板，基于 XeLaTeX，支持变量集中管理。
 
 [![LaTeX](https://img.shields.io/badge/LaTeX-XeLaTeX-blue)](https://www.latex-project.org/)
-[![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
+[![License: CC BY 4.0](https://img.shields.io/badge/License-CC%20BY%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by/4.0/)
 [![OverLeaf](https://img.shields.io/badge/OverLeaf-Compatible-success)](https://www.overleaf.com/)
 [![CTeX](https://img.shields.io/badge/CTeX-2.0%2B-orange)](http://www.ctex.org/)
 
@@ -155,5 +155,4 @@ latexmk main.tex
 6. **带圈数字** —— ①②③… 已通过 `\xeCJKDeclareCharClass` 归入中文字体，可直接使用。
 
 ## 开源协议
-
-本项目采用 **MIT License** 开源。
+本项目采用 **Creative Commons Attribution 4.0 International (CC BY 4.0)** 协议开源。
